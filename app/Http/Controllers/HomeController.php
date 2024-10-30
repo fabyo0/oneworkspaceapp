@@ -22,7 +22,7 @@ class HomeController extends Controller
     {
         if(Auth::check())
         {
-            return redirect('dashboard');
+            return redirect()->route('dashboard');
         }
         else
         {

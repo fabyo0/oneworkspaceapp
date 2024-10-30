@@ -513,6 +513,7 @@ if (!function_exists('module_is_active')) {
         }
     }
 }
+
 if (!function_exists('ActivatedModule')) {
     function ActivatedModule($user_id = null)
     {
@@ -523,23 +524,24 @@ if (!function_exists('ActivatedModule')) {
         } elseif (Auth::check()) {
             $user = Auth::user();
         }
+
         if (!empty($user)) {
             $available_modules = array_keys(Module::getByStatus(1));
 
             if ($user->type == 'super admin') {
                 $user_active_module = $available_modules;
             } else {
+                static $active_module = null;
+
                 if ($user->type != 'company') {
                     $user_not_com = User::find($user->created_by);
                     if (!empty($user)) {
                         // Sidebar Performance Changes
-                        static $active_module = null;
                         if ($active_module == null) {
                             $active_module = userActiveModule::where('user_id', $user_not_com->id)->pluck('module')->toArray();
                         }
                     }
                 } else {
-                    static $active_module = null;
                     if ($active_module == null) {
                         $active_module = userActiveModule::where('user_id', $user->id)->pluck('module')->toArray();
                     }
@@ -553,6 +555,9 @@ if (!function_exists('ActivatedModule')) {
         return $user_active_module;
     }
 }
+
+
+
 // module alias name
 if (!function_exists('Module_Alias_Name')) {
     function Module_Alias_Name($module_name)
